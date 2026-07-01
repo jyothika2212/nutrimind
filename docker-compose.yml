@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb+srv://jyothikaakula1_db_user:jyothika123@cluster0.atkwgqv.mongodb.net/nutrimind?retryWrites=true&w=majority&appName=Cluster0
+      - JWT_SECRET=nutri_mind_jwt_secret_key_2026_enterprise_level_secure
+      - JWT_REFRESH_SECRET=nutri_mind_jwt_refresh_secret_key_2026_enterprise_level_secure
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
