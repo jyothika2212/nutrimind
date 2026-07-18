@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 import api from '../services/api';
-import { Search, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Sparkles, Plus, X } from 'lucide-react';
 
 export const FoodDatabase: React.FC = () => {
+  const { user } = useSelector((state: RootState) => state.auth);
+  const isAdmin = user?.role === 'Admin';
+
   const [foods, setFoods] = useState<any[]>([]);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
@@ -10,6 +15,57 @@ export const FoodDatabase: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  // New food creation states
+  const [addModal, setAddModal] = useState(false);
+  const [foodForm, setFoodForm] = useState({
+    name: '',
+    category: 'Grains',
+    servingSize: '100g',
+    calories: 100,
+    protein: 5,
+    carbs: 15,
+    fat: 2,
+    fiber: 0,
+    sugar: 0,
+    sodium: 0,
+    potassium: 0,
+    image: ''
+  });
+  const [formError, setFormError] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+
+  const handleAddFood = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formSubmitting) return;
+    setFormError('');
+    setFormSubmitting(true);
+    try {
+      await api.post('/food/create', foodForm);
+      setAddModal(false);
+      setFoodForm({
+        name: '',
+        category: 'Grains',
+        servingSize: '100g',
+        calories: 100,
+        protein: 5,
+        carbs: 15,
+        fat: 2,
+        fiber: 0,
+        sugar: 0,
+        sodium: 0,
+        potassium: 0,
+        image: ''
+      });
+      fetchFoods();
+      fetchCategories();
+    } catch (err: any) {
+      console.error(err);
+      setFormError(err.response?.data?.error || 'Failed to create food item');
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
 
   const fetchFoods = async () => {
     setLoading(true);
@@ -43,9 +99,19 @@ export const FoodDatabase: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h2 className="font-extrabold text-2xl tracking-tight">Food Database</h2>
-        <p className="text-xs text-slate-400">Search nutritional indexes spanning global and Indian cuisines</p>
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h2 className="font-extrabold text-2xl tracking-tight">Food Database</h2>
+          <p className="text-xs text-slate-400">Search nutritional indexes spanning global and Indian cuisines</p>
+        </div>
+        {isAdmin && (
+          <button
+            onClick={() => setAddModal(true)}
+            className="btn-primary py-2 px-4 text-xs font-bold flex items-center gap-1.5"
+          >
+            <Plus size={14} /> Add New Food
+          </button>
+        )}
       </div>
 
       {/* Query panel and Filter Row */}
@@ -152,6 +218,195 @@ export const FoodDatabase: React.FC = () => {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Add New Food Modal */}
+      {addModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg p-6 rounded-20px shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b pb-3 dark:border-slate-800">
+              <h3 className="font-extrabold text-lg">Add New Food Catalog Item</h3>
+              <button onClick={() => setAddModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={18} />
+              </button>
+            </div>
+            
+            {formError && (
+              <div className="bg-rose-500/10 text-rose-500 border border-rose-500/20 p-3 rounded-lg text-xs font-semibold">
+                {formError}
+              </div>
+            )}
+
+            <form onSubmit={handleAddFood} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Food Name *</label>
+                  <input
+                    type="text"
+                    value={foodForm.name}
+                    onChange={(e) => setFoodForm({ ...foodForm, name: e.target.value })}
+                    placeholder="e.g. Avocado Salad"
+                    className="glass-input w-full"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Category *</label>
+                  <select
+                    value={foodForm.category}
+                    onChange={(e) => setFoodForm({ ...foodForm, category: e.target.value })}
+                    className="glass-input w-full font-semibold"
+                  >
+                    <option value="Grains">Grains</option>
+                    <option value="Protein">Protein</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Fruits">Fruits</option>
+                    <option value="Vegetables">Vegetables</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Serving Size *</label>
+                  <input
+                    type="text"
+                    value={foodForm.servingSize}
+                    onChange={(e) => setFoodForm({ ...foodForm, servingSize: e.target.value })}
+                    placeholder="e.g. 100g, 1 piece"
+                    className="glass-input w-full"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Calories (kcal) *</label>
+                  <input
+                    type="number"
+                    value={foodForm.calories}
+                    onChange={(e) => setFoodForm({ ...foodForm, calories: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+
+              <h4 className="font-bold text-[10px] text-emerald-500 uppercase tracking-widest border-b pb-1 dark:border-slate-800">Macronutrients (per serving)</h4>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Protein (g) *</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={foodForm.protein}
+                    onChange={(e) => setFoodForm({ ...foodForm, protein: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Carbs (g) *</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={foodForm.carbs}
+                    onChange={(e) => setFoodForm({ ...foodForm, carbs: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Fat (g) *</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={foodForm.fat}
+                    onChange={(e) => setFoodForm({ ...foodForm, fat: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+
+              <h4 className="font-bold text-[10px] text-indigo-500 uppercase tracking-widest border-b pb-1 dark:border-slate-800">Micronutrients & Extras (Optional)</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Fiber (g)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={foodForm.fiber}
+                    onChange={(e) => setFoodForm({ ...foodForm, fiber: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Sugar (g)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={foodForm.sugar}
+                    onChange={(e) => setFoodForm({ ...foodForm, sugar: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Sodium (mg)</label>
+                  <input
+                    type="number"
+                    value={foodForm.sodium}
+                    onChange={(e) => setFoodForm({ ...foodForm, sodium: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Potassium (mg)</label>
+                  <input
+                    type="number"
+                    value={foodForm.potassium}
+                    onChange={(e) => setFoodForm({ ...foodForm, potassium: Number(e.target.value) })}
+                    className="glass-input w-full"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-400 uppercase">Image URL (Optional)</label>
+                <input
+                  type="url"
+                  value={foodForm.image}
+                  onChange={(e) => setFoodForm({ ...foodForm, image: e.target.value })}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="glass-input w-full"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t dark:border-slate-800">
+                <button
+                  type="submit"
+                  disabled={formSubmitting}
+                  className="btn-primary flex-1 py-2.5 text-xs font-bold"
+                >
+                  {formSubmitting ? 'Creating...' : 'Create Item'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAddModal(false)}
+                  className="btn-secondary flex-1 py-2.5 text-xs font-bold"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

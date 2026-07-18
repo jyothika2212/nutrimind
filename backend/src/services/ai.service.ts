@@ -20,8 +20,11 @@ export class AIService {
     if (!genAI) {
       throw new Error('Gemini AI is not initialized. Please verify GEMINI_API_KEY in the backend .env configuration.');
     }
-    // gemini-2.5-flash is fast, reliable and works great for structured text returns.
-    return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    // gemini-1.5-flash is fast, reliable and works great for structured text returns.
+    return genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      systemInstruction: "You are NutriMind AI, an elite clinical dietitian and wellness advisor. Provide expert, scientifically-backed, and empathetic nutritional advice."
+    });
   }
 
   /**

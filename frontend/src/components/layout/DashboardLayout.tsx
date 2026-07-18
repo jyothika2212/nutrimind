@@ -38,6 +38,7 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const navigationItems: SidebarItem[] = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['User'] },
@@ -45,7 +46,7 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
     { name: 'Admin Terminal', path: '/admin-dashboard', icon: Activity, roles: ['Admin'] },
     { name: 'AI Planner', path: '/ai-planner', icon: Sparkles, roles: ['User'] },
     { name: 'Food Database', path: '/food-database', icon: Search, roles: ['User', 'Dietitian', 'Nutritionist', 'Admin'] },
-    { name: 'Appointments', path: '/appointments', icon: Calendar, roles: ['User', 'Dietitian', 'Nutritionist'] },
+    { name: 'Appointments', path: '/appointments', icon: Calendar, roles: ['User'] },
     { name: 'Consult Room', path: '/chat', icon: MessageSquare, roles: ['User', 'Dietitian', 'Nutritionist'] },
     { name: 'My History', path: '/history', icon: History, roles: ['User'] },
     { name: 'Recipes', path: '/recipes', icon: BookOpen, roles: ['User', 'Dietitian', 'Nutritionist'] }
@@ -108,11 +109,18 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
         {/* User Card & Settings */}
         <div className="border-t border-slate-200/50 dark:border-slate-800/50 pt-4 space-y-2">
           <div className="flex items-center gap-3 px-2">
-            <img
-              src={user?.profilePicture}
-              alt={user?.name}
-              className="w-10 h-10 rounded-full border border-emerald-500/30"
-            />
+            {!user?.profilePicture || imgError ? (
+              <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-xs border border-emerald-500/20">
+                {user?.name ? user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
+              </div>
+            ) : (
+              <img
+                src={user.profilePicture}
+                alt={user.name}
+                onError={() => setImgError(true)}
+                className="w-10 h-10 rounded-full border border-emerald-500/30 object-cover"
+              />
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{user?.name}</p>
               <p className="text-[10px] bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 font-bold inline-block">{user?.role}</p>

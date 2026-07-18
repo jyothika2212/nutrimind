@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { Users, Calendar, Clipboard, Plus, Shield, Send, Check } from 'lucide-react';
 
@@ -200,14 +201,12 @@ export const DietitianDashboard: React.FC = () => {
                   )}
 
                   {appt.status === 'Approved' && appt.videoLink && (
-                    <a
-                      href={appt.videoLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to={`/meeting/${appt._id}`}
                       className="btn-secondary py-1.5 w-full text-[10px] text-center block text-emerald-500 font-extrabold border-emerald-500/20"
                     >
-                      Join Video Meeting Room
-                    </a>
+                      Join Video Consultation Room
+                    </Link>
                   )}
                 </div>
               ))

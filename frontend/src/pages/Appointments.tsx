@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { Calendar, Clock, Video, FileText } from 'lucide-react';
 
@@ -175,14 +176,12 @@ export const Appointments: React.FC = () => {
                   <p className="text-[10px] text-slate-400 italic">Notes: "{appt.notes || 'No description notes added.'}"</p>
 
                   {appt.status === 'Approved' && appt.videoLink && (
-                    <a
-                      href={appt.videoLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to={`/meeting/${appt._id}`}
                       className="btn-secondary py-1.5 text-center text-emerald-500 font-extrabold border-emerald-500/20 block"
                     >
-                      Join Jitsi Video Room
-                    </a>
+                      Join Video Consultation Room
+                    </Link>
                   )}
                 </div>
               ))

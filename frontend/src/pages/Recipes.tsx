@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Clock, Heart, Flame } from 'lucide-react';
+import api from '../services/api';
 
 export const Recipes: React.FC = () => {
   // Hardcoded curated recipes for illustration.
@@ -39,7 +40,30 @@ export const Recipes: React.FC = () => {
     }
   ];
 
+  const [recipes, setRecipes] = useState<any[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRecipes = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/food/recipes');
+      setRecipes(res.data);
+      if (res.data && res.data.length > 0) {
+        setSelectedRecipe(res.data[0]);
+      }
+    } catch (err) {
+      console.error('Error fetching recipes:', err);
+      setRecipes(mockRecipes);
+      setSelectedRecipe(mockRecipes[0]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
 
   return (
     <div className="space-y-6 pb-20">
@@ -48,29 +72,34 @@ export const Recipes: React.FC = () => {
         <p className="text-xs text-slate-400">Discover nutritionist-approved dishes, ingredients lists, and preparation guides</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* List of recipes */}
-        <div className="lg:col-span-1 space-y-4">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Available Dishes</span>
-          <div className="space-y-3">
-            {mockRecipes.map((rec, i) => (
-              <div
-                key={i}
-                onClick={() => setSelectedRecipe(rec)}
-                className={`glass-card p-3 border-slate-200/45 dark:border-slate-800/40 cursor-pointer flex gap-3 items-center hover:bg-slate-100 dark:hover:bg-slate-900/50 transition-colors ${selectedRecipe?.name === rec.name ? 'border-emerald-500/30 bg-emerald-500/5' : ''}`}
-              >
-                <img src={rec.image} alt={rec.name} className="w-16 h-16 rounded-lg object-cover" />
-                <div className="flex-1 min-w-0 text-xs">
-                  <h4 className="font-bold truncate">{rec.name}</h4>
-                  <div className="flex gap-2 text-[10px] text-slate-400 font-semibold mt-1">
-                    <span className="flex items-center gap-0.5"><Clock size={12} /> {rec.prepTime}m</span>
-                    <span className="flex items-center gap-0.5"><Flame size={12} /> {rec.calories} kcal</span>
+      {loading ? (
+        <div className="py-12 flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* List of recipes */}
+          <div className="lg:col-span-1 space-y-4">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Available Dishes</span>
+            <div className="space-y-3">
+              {recipes.map((rec, i) => (
+                <div
+                  key={i}
+                  onClick={() => setSelectedRecipe(rec)}
+                  className={`glass-card p-3 border-slate-200/45 dark:border-slate-800/40 cursor-pointer flex gap-3 items-center hover:bg-slate-100 dark:hover:bg-slate-900/50 transition-colors ${selectedRecipe?.name === rec.name ? 'border-emerald-500/30 bg-emerald-500/5' : ''}`}
+                >
+                  <img src={rec.image} alt={rec.name} className="w-16 h-16 rounded-lg object-cover" />
+                  <div className="flex-1 min-w-0 text-xs">
+                    <h4 className="font-bold truncate">{rec.name}</h4>
+                    <div className="flex gap-2 text-[10px] text-slate-400 font-semibold mt-1">
+                      <span className="flex items-center gap-0.5"><Clock size={12} /> {rec.prepTime || rec.preparationTime}m</span>
+                      <span className="flex items-center gap-0.5"><Flame size={12} /> {rec.calories} kcal</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
         {/* Recipe detail card */}
         <div className="lg:col-span-2 glass-card p-6 border-slate-200/50 dark:border-slate-800/40 min-h-[400px] text-xs">
@@ -79,7 +108,7 @@ export const Recipes: React.FC = () => {
               <div className="h-48 overflow-hidden rounded-2xl relative">
                 <img src={selectedRecipe.image} alt={selectedRecipe.name} className="w-full h-full object-cover" />
                 <div className="absolute top-4 left-4 bg-slate-900/80 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <Clock size={12} /> {selectedRecipe.prepTime} mins
+                  <Clock size={12} /> {selectedRecipe.prepTime || selectedRecipe.preparationTime} mins
                 </div>
               </div>
 
@@ -116,7 +145,7 @@ export const Recipes: React.FC = () => {
               <div>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Cooking Steps</span>
                 <ol className="list-decimal pl-4 space-y-2">
-                  {selectedRecipe.steps.map((step: string, idx: number) => (
+                  {(selectedRecipe.steps || selectedRecipe.cookingSteps || []).map((step: string, idx: number) => (
                     <li key={idx} className="font-medium leading-relaxed">{step}</li>
                   ))}
                 </ol>
@@ -129,6 +158,7 @@ export const Recipes: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    )}
+  </div>
   );
 };

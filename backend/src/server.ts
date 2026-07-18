@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db';
 import apiRouter from './routes';
 import Chat, { ChatMessage } from './models/Chat';
+import { AIService } from './services/ai.service';
 
 dotenv.config();
 
@@ -35,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 // Rate limiter: 100 requests per 15 minutes max per IP
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 10000,
   message: { error: 'Too many requests from this IP, please try again in 15 minutes' }
 });
 app.use('/api/', limiter);
@@ -83,6 +84,40 @@ io.on('connection', (socket) => {
       // 2. Broadcast message inside room
       io.to(chatId).emit('receive_message', newMessage);
       console.log(`Message broadcasted inside room: ${chatId}`);
+
+      // 3. Auto-answer if recipient is AI Doctor
+      const AI_DOCTOR_ID = '414920446f63746f72204944';
+      if (recipientId === AI_DOCTOR_ID) {
+        // Fetch last 10 messages from MongoDB for chat history to give context to Gemini
+        const historyMessages = await ChatMessage.find({ chatId })
+          .sort({ createdAt: -1 })
+          .limit(10);
+        
+        // Reverse history to chronological order
+        const sortedHistory = historyMessages.reverse();
+
+        const chatHistory = sortedHistory.map(msg => ({
+          role: msg.senderId.toString() === AI_DOCTOR_ID ? 'model' as const : 'user' as const,
+          parts: msg.messageText
+        }));
+
+        // Call Gemini
+        const aiResponseText = await AIService.chatReply(chatHistory, messageText);
+
+        // Save AI response to MongoDB
+        const aiMessage = new ChatMessage({
+          chatId,
+          senderId: AI_DOCTOR_ID,
+          recipientId: senderId,
+          messageText: aiResponseText,
+          isRead: false
+        });
+        await aiMessage.save();
+
+        // Emit AI response inside room
+        io.to(chatId).emit('receive_message', aiMessage);
+        console.log(`AI Doctor response emitted inside room: ${chatId}`);
+      }
     } catch (err) {
       console.error('Error saving socket message:', (err as Error).message);
     }
@@ -111,7 +146,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5010;
 
 // Connect to Database and start server
 connectDB().then(() => {

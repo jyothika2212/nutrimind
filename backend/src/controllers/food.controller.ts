@@ -1,5 +1,15 @@
 import { Request, Response } from 'express';
 import Food from '../models/Food';
+import Recipe from '../models/Recipe';
+
+export const getRecipes = async (req: Request, res: Response) => {
+  try {
+    const recipes = await Recipe.find({});
+    res.status(200).json(recipes);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
 export const searchFoods = async (req: Request, res: Response) => {
   try {

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from '../store';
 import { logout, loginSuccess } from '../store/authSlice';
 
-export const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+export const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5010';
 const API_BASE = `${BACKEND_URL}/api`;
 
 const api = axios.create({

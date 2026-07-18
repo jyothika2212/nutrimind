@@ -274,3 +274,80 @@ export const googleAuthMock = async (req: Request, res: Response) => {
     res.status(500).json({ error: (error as Error).message });
   }
 };
+
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({ error: 'Google ID token is required' });
+    }
+
+    // Verify token using Google's API endpoint (lightweight, zero dependency)
+    const tokenVerificationUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`;
+    const response = await fetch(tokenVerificationUrl);
+    if (!response.ok) {
+      return res.status(400).json({ error: 'Google ID token verification failed' });
+    }
+
+    const payload = (await response.json()) as any;
+
+    // Verify the audience (client ID) if configured
+    const client_id = process.env.GOOGLE_CLIENT_ID;
+    if (client_id && client_id !== 'YOUR_GOOGLE_CLIENT_ID' && payload.aud !== client_id) {
+      return res.status(400).json({ error: 'Token audience does not match client ID' });
+    }
+
+    const { email, name, sub: googleId, picture: profilePicture } = payload;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        googleId,
+        profilePicture,
+        role: 'User',
+        isVerified: true
+      });
+      await user.save();
+    } else {
+      // Update googleId and profilePicture if not present
+      let updated = false;
+      if (!user.googleId) {
+        user.googleId = googleId;
+        updated = true;
+      }
+      if (!user.profilePicture && profilePicture) {
+        user.profilePicture = profilePicture;
+        updated = true;
+      }
+      if (updated) {
+        await user.save();
+      }
+    }
+
+    const { accessToken, refreshToken } = generateTokens({
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role
+    });
+
+    res.status(200).json({
+      message: 'Google login successful',
+      accessToken,
+      refreshToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePicture: user.profilePicture,
+        isVerified: user.isVerified,
+        userDetails: user.userDetails
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
+

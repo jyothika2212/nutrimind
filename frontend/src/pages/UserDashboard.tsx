@@ -296,9 +296,14 @@ export const UserDashboard: React.FC = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="font-extrabold text-lg">Health Vitals</h2>
-            <button onClick={() => setVitalsModal(true)} className="btn-secondary py-1 px-2.5 text-xs">
-              Log Vital
-            </button>
+            <div className="flex gap-2">
+              <button onClick={() => setWorkoutModal(true)} className="btn-primary py-1 px-2.5 text-xs">
+                Log Workout
+              </button>
+              <button onClick={() => setVitalsModal(true)} className="btn-secondary py-1 px-2.5 text-xs">
+                Log Vital
+              </button>
+            </div>
           </div>
 
           {/* Vitals row widgets */}
@@ -341,6 +346,26 @@ export const UserDashboard: React.FC = () => {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+          </div>
+
+          {/* Workouts Logged list */}
+          <div className="glass-card p-5 border-slate-200/50 dark:border-slate-800/40">
+            <h3 className="text-xs font-bold text-slate-500 uppercase mb-4">Workouts Logged Today</h3>
+            {todayData.workouts && todayData.workouts.length > 0 ? (
+              <div className="divide-y dark:divide-slate-800">
+                {todayData.workouts.map((w: any, i: number) => (
+                  <div key={i} className="flex justify-between items-center py-2 text-xs">
+                    <div>
+                      <p className="font-semibold">{w.name}</p>
+                      <p className="text-[10px] text-slate-400">{w.duration} mins • Intensity: {w.intensity}</p>
+                    </div>
+                    <span className="font-bold text-amber-500">-{w.caloriesBurned} kcal</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400">No workouts logged today.</p>
+            )}
           </div>
         </div>
       </div>
@@ -425,6 +450,46 @@ export const UserDashboard: React.FC = () => {
               <div className="flex gap-3 pt-3">
                 <button type="submit" className="btn-primary flex-1 py-2.5">Save Vitals</button>
                 <button type="button" onClick={() => setVitalsModal(false)} className="btn-secondary flex-1 py-2.5">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Workout Log Modal */}
+      {workoutModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md p-6 rounded-20px shadow-2xl space-y-4">
+            <h3 className="font-extrabold text-lg">Log Workout</h3>
+            <form onSubmit={handleLogWorkout} className="space-y-4 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-400 uppercase">Workout Name</label>
+                <input type="text" value={workoutForm.name} onChange={(e) => setWorkoutForm({ ...workoutForm, name: e.target.value })} placeholder="e.g. Jogging" className="glass-input w-full" required />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Duration (mins)</label>
+                  <input type="number" value={workoutForm.duration} onChange={(e) => setWorkoutForm({ ...workoutForm, duration: Number(e.target.value) })} className="glass-input w-full" required />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400 uppercase">Calories Burned (kcal)</label>
+                  <input type="number" value={workoutForm.caloriesBurned} onChange={(e) => setWorkoutForm({ ...workoutForm, caloriesBurned: Number(e.target.value) })} className="glass-input w-full" required />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-400 uppercase">Intensity</label>
+                <select value={workoutForm.intensity} onChange={(e) => setWorkoutForm({ ...workoutForm, intensity: e.target.value })} className="glass-input w-full">
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-3">
+                <button type="submit" className="btn-primary flex-1 py-2.5">Save Workout</button>
+                <button type="button" onClick={() => setWorkoutModal(false)} className="btn-secondary flex-1 py-2.5">Cancel</button>
               </div>
             </form>
           </div>

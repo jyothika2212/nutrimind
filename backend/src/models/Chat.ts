@@ -37,7 +37,7 @@ const ChatSchema: Schema = new Schema(
 
 const ChatMessageSchema = new Schema(
   {
-    chatId: { type: Schema.Types.ObjectId, ref: 'Chat', required: true },
+    chatId: { type: String, required: true },
     senderId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     recipientId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     messageText: { type: String, required: true },

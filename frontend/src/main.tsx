@@ -18,6 +18,7 @@ import { History } from './pages/History';
 import { Recipes } from './pages/Recipes';
 import { DietitianDashboard } from './pages/DietitianDashboard';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { VideoMeeting } from './pages/VideoMeeting';
 import './index.css';
 
 // Initialize UI theme from storage on start
@@ -44,6 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/dashboard" element={<LayoutWrapper><UserDashboard /></LayoutWrapper>} />
             <Route path="/ai-planner" element={<LayoutWrapper><AiAssistant /></LayoutWrapper>} />
             <Route path="/history" element={<LayoutWrapper><History /></LayoutWrapper>} />
+            <Route path="/appointments" element={<LayoutWrapper><Appointments /></LayoutWrapper>} />
           </Route>
 
           {/* Protected Dietitian and Specialist Workspace */}
@@ -56,12 +58,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/admin-dashboard" element={<LayoutWrapper><AdminDashboard /></LayoutWrapper>} />
           </Route>
 
+          {/* Protected Shared Client & Specialist Pages */}
+          <Route element={<ProtectedRoute allowedRoles={['User', 'Dietitian', 'Nutritionist']} />}>
+            <Route path="/recipes" element={<LayoutWrapper><Recipes /></LayoutWrapper>} />
+            <Route path="/chat" element={<LayoutWrapper><ChatRooms /></LayoutWrapper>} />
+            <Route path="/meeting/:appointmentId" element={<LayoutWrapper><VideoMeeting /></LayoutWrapper>} />
+          </Route>
+
           {/* Protected Shared Pages */}
           <Route element={<ProtectedRoute allowedRoles={['User', 'Dietitian', 'Nutritionist', 'Admin']} />}>
             <Route path="/food-database" element={<LayoutWrapper><FoodDatabase /></LayoutWrapper>} />
-            <Route path="/recipes" element={<LayoutWrapper><Recipes /></LayoutWrapper>} />
-            <Route path="/appointments" element={<LayoutWrapper><Appointments /></LayoutWrapper>} />
-            <Route path="/chat" element={<LayoutWrapper><ChatRooms /></LayoutWrapper>} />
           </Route>
 
           {/* Catch-all fallback */}

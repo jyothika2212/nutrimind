@@ -6,7 +6,8 @@ import {
   requestOtp,
   verifyOtp,
   saveProfileDetails,
-  googleAuthMock
+  googleAuthMock,
+  googleLogin
 } from '../controllers/auth.controller';
 import { authenticateJWT } from '../middleware/auth.middleware';
 
@@ -18,6 +19,7 @@ router.post('/refresh-token', refreshToken);
 router.post('/otp-request', requestOtp);
 router.post('/otp-verify', verifyOtp);
 router.post('/google-mock', googleAuthMock);
+router.post('/google', googleLogin);
 router.post('/profile-details', authenticateJWT, saveProfileDetails);
 
 export default router;
