@@ -202,18 +202,44 @@ Detailed cloud installation steps are documented in [docs/deployment.md](docs/de
 
 ---
 
-## 11. Screenshots Checklist
-Below is a checklist of required screenshots to represent all sections of the application once they are captured by the administrator post-deployment:
+## 11. Screenshots Gallery
 
-- [ ] **Home / Landing Page:** Introduction, portal login portals.
-- [ ] **Login View:** Glassmorphism form for user credentials.
-- [ ] **Registration View:** Form to choose role (Client, Dietitian, Nutritionist).
-- [ ] **Client Dashboard:** Visual health metrics, weight tracker graphs, calorie indicators.
-- [ ] **AI Assistant:** Gemini chatbot pane for health consultations.
-- [ ] **Meal Planner:** Dietitian workspace with recipe grids.
-- [ ] **Reports View:** Detailed graphs representing calorie history logs.
-- [ ] **Profile Manager:** Forms to configure age, weight, goals, and allergies.
-- [ ] **Admin Dashboard:** Platform stats cards, user tables list, and roles update forms.
+Below are the screenshots of the active NutriMind AI platform:
+
+### Client Dashboard
+![Client Dashboard](docs/screenshots/client_dashboard.jpg)
+*Interactive dashboard displaying Caloric Balance budgeting, macro logs distributions, water metrics, sleep details, and vital tracking timelines.*
+
+### Food Database
+![Food Database](docs/screenshots/food_database.jpg)
+*Nutritional food index browser listing grains, dairy, protein, and vegetable options with detailed macronutrient profiles.*
+
+### AI Nutrition Chat
+![AI Nutrition Chat](docs/screenshots/ai_nutrition_chat.jpg)
+*Google Gemini AI-powered nutritionist chat interface providing clinical dietary answers and unstructured log parsing.*
+
+### Appointment Scheduler
+![Appointment Scheduler](docs/screenshots/appointment_scheduler.jpg)
+*Clinical appointments slot scheduler form for client profile integrations and upcoming consultation lists.*
+
+### Consultation Success
+![Consultation Success](docs/screenshots/consultation_success.jpg)
+*Live verification alert showing successful scheduling on the server database.*
+
+### Progress Tracking
+![Progress Tracking](docs/screenshots/progress_tracking.jpg)
+*Calorie history timelines, sleep logs charts, and weight fluctuation graphs.*
+
+---
+
+### Remaining Screens Checklist
+* [ ] **Home Page:** Overview of landing sections.
+* [ ] **Login Page:** Glassmorphism credentials form.
+* [ ] **Registration Page:** Sign-up selector (Client vs Specialist).
+* [ ] **AI Recommendation:** Dedicated Daily Calorie computation panel.
+* [ ] **Meal Planner:** Dietitian templates assignment sheets.
+* [ ] **Video Consultation:** Jitsi secure WebRTC video room.
+* [ ] **Admin Dashboard:** Platform metrics totals and account roles.
 
 ---
 
