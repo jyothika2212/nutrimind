@@ -13,7 +13,8 @@ nutrimind/
 │   │   └── question.md          # Question/Support template
 │   └── PULL_REQUEST_TEMPLATE.md # PR description checklist template (uppercase)
 ├── assets/                      # Graphic and media branding assets
-│   └── banner.png               # Repository banner image
+│   ├── banner.png               # Repository banner image
+│   └── demo.mp4                 # Walkthrough demo video file
 ├── docs/                        # Deep-Dive Project Documentation
 │   ├── screenshots/             # Screenshots directory (placeholder checklist)
 │   │   └── README.md            # Guide to expected screenshots

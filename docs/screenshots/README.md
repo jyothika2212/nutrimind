@@ -49,6 +49,14 @@ This directory houses the graphical screens representing the client portal, AI i
 
 ---
 
+## 🎥 Project Demo Video
+
+A full platform walkthrough video is available in the repository:
+* **File Location:** [assets/demo.mp4](../../assets/demo.mp4)
+* **Direct Download link:** [Download demo.mp4](../../assets/demo.mp4?raw=true)
+
+---
+
 ## Missing Screens Checklist
 The following screens still need to be captured and placed in this directory:
 - [ ] **Home Page:** Application landing and overview sections.

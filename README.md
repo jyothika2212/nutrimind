@@ -243,21 +243,49 @@ Below are the screenshots of the active NutriMind AI platform:
 
 ---
 
-## 12. Demo Video
-*A walk-through video demonstrating features (registration, logging, AI recipes, and specialist assignments) can be recorded and referenced here:*
+## 12. 🎥 Project Demo
 
-* **Video Walkthrough File:** `docs/screenshots/demo.mp4` (Not currently recorded; developers can record a walk-through and place it at this location).
+If GitHub can preview the video, you can view the video file directly:
+* **Demo Video File:** [assets/demo.mp4](assets/demo.mp4)
+* **Direct Download link:** [Download demo.mp4](assets/demo.mp4?raw=true)
+
+Project walkthrough demonstrating:
+* **Home Page:** Overview of landing sections.
+* **Authentication:** Secure glassmorphism sign-up/login forms.
+* **Client Dashboard:** Visual health metrics, weight tracker graphs, calorie indicators.
+* **AI Nutrition Recommendations:** Google Gemini AI computed daily calorie requirements.
+* **Meal Planner:** Assigned meal programs lists.
+* **Food Database:** Interactive nutritional catalog search.
+* **AI Chat Assistant:** Generative chat with the dietitian specialist.
+* **Appointment Scheduling:** Specialist selector and upcoming slot reservations.
+* **Progress Tracking:** Interactive charts for calories, weight, sleep, and water.
+* **Responsive UI:** Desktop and mobile responsive layouts.
 
 ---
 
-## 13. Future Enhancements
+## 13. 🚀 Demo Highlights
+
+The walkthrough demonstrates the following capabilities in action:
+* ✔ **User Registration:** Dynamic role configuration (Client vs Specialist).
+* ✔ **Secure Login:** Session token management.
+* ✔ **Personalized Dashboard:** Unified metrics widgets.
+* ✔ **AI Nutrition Recommendation:** Gemini daily intake estimations.
+* ✔ **Meal Planning:** Specialised recipes catalog.
+* ✔ **Food Database:** Categorized index search.
+* ✔ **Progress Analytics:** Dynamic charting.
+* ✔ **Appointment Scheduling:** Calendar bookings integration.
+* ✔ **AI Chat Assistant:** Nutrition query parsing.
+
+---
+
+## 14. Future Enhancements
 * **Wearable Integrations:** Connect with Apple HealthKit and Google Fit APIs to sync workouts and vitals.
 * **Custom Meal Scanning:** Implement image classification models so users can take photos of meals to estimate calories.
 * **Offline Synchronization:** Utilize service workers to support meal logs buffering during network disruptions.
 
 ---
 
-## 14. Contributors & License
+## 15. Contributors & License
 
 ### Contributors
 * **Jyothika** (Project Creator) - [GitHub profile](https://github.com/jyothika2212)
